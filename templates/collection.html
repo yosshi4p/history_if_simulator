@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>コレクション | 歴史ifシミュレーター</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark" aria-hidden="true">⌛</span>
+        <span><strong>歴史ifシミュレーター</strong><small>もしも、あの時――</small></span>
+      </a>
+      <nav class="global-nav" aria-label="メインメニュー">
+        <a href="{{ url_for('index') }}">世界線をつくる</a>
+        <a class="is-current" aria-current="page" href="{{ url_for('collection') }}">コレクション</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container collection-container">
+    <header class="page-heading">
+      <p class="eyebrow">WORLDLINE COLLECTION</p>
+      <h1>世界線コレクション</h1>
+      <p>保存した「もしもの歴史」を振り返れます。</p>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-list" role="status">
+          {% for category, message in messages %}
+            <p class="flash flash-{{ category }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {# app.pyから渡されるworldlinesを1件ずつ表示します。 #}
+    {% if worldlines %}
+      <div class="collection-grid">
+        {% for item in worldlines %}
+          <article class="collection-card">
+            <div class="collection-card-top">
+              <span class="format-badge">{{ item.output_format }}</span>
+              <time datetime="{{ item.created_at.isoformat() }}+09:00">{{ item.created_at.strftime('%Y年%m月%d日 %H:%M') }}</time>
+            </div>
+            <p class="result-kicker">{{ item.world_id }}</p>
+            <h2>{{ item.title }}</h2>
+            <p class="collection-preview">{{ item.body|truncate(150, true, '…') }}</p>
+            <a class="card-link" href="{{ url_for('worldline_detail', world_id=item.world_id) }}">この世界線を読む <span aria-hidden="true">→</span></a>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <section class="empty-state">
+        <span aria-hidden="true">🕰️</span>
+        <h2>まだ世界線がありません</h2>
+        <p>生成結果の「コレクションに保存」を押すと、ここに追加されます。</p>
+        <a class="primary-button" href="{{ url_for('index') }}">世界線をつくる</a>
+      </section>
+    {% endif %}
+  </main>
+  <footer class="site-footer"><div class="container"><p>歴史ifシミュレーター</p><small>生成内容はAIによる仮想シミュレーションです。</small></div></footer>
+</body>
+</html>
+

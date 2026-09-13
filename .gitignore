@@ -1,0 +1,19 @@
+# 秘密の設定とローカル環境
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# 生成結果が入るローカルデータベース
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+instance/
+
+# OSが作る管理ファイル
+.DS_Store
+Thumbs.db

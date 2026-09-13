@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ worldline.title }} | 歴史ifシミュレーター</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark" aria-hidden="true">⌛</span>
+        <span><strong>歴史ifシミュレーター</strong><small>もしも、あの時――</small></span>
+      </a>
+      <nav class="global-nav" aria-label="メインメニュー">
+        <a href="{{ url_for('index') }}">世界線をつくる</a>
+        <a href="{{ url_for('collection') }}">コレクション</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container detail-container">
+    <a class="back-link" href="{{ url_for('collection') }}"><span aria-hidden="true">←</span> コレクションへ戻る</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-list" role="status">
+          {% for category, message in messages %}
+            <p class="flash flash-{{ category }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <article class="result-card detail-card">
+      <header class="result-header">
+        <p class="result-kicker">保存された世界線 · {{ worldline.world_id }}</p>
+        <h1>{{ worldline.title }}</h1>
+        <p class="input-note">分岐点：{{ worldline.branch_point }}</p>
+        <div class="detail-meta">
+          <span class="format-badge">{{ worldline.output_format }}</span>
+          <time datetime="{{ worldline.created_at.isoformat() }}+09:00">保存日時：{{ worldline.created_at.strftime('%Y年%m月%d日 %H:%M') }}（日本時間）</time>
+        </div>
+      </header>
+      <div class="worldline-result" id="worldline-result">{{ worldline.body }}</div>
+      <footer class="result-footer"><p>この内容はAIによる仮想シミュレーションであり、史実ではありません。</p></footer>
+    </article>
+    <div class="action-row">
+      <button class="secondary-button" type="button" id="copy-button">結果をコピー</button>
+      <a class="primary-button" href="{{ url_for('index') }}">新しい世界線をつくる</a>
+    </div>
+    <p class="input-note" id="copy-status" role="status"></p>
+    <details class="delete-area">
+      <summary>この世界線を削除する</summary>
+      <p class="input-note">削除するとコレクションから消え、元に戻せません。</p>
+      <form action="{{ url_for('delete_worldline', world_id=worldline.world_id) }}" method="post" id="delete-form">
+        <button class="secondary-button danger-button" type="submit">削除する</button>
+      </form>
+    </details>
+  </main>
+  <footer class="site-footer"><div class="container"><p>歴史ifシミュレーター</p><small>生成内容はAIによる仮想シミュレーションです。</small></div></footer>
+  <script>
+    document.getElementById('copy-button').addEventListener('click', async () => {
+      const status = document.getElementById('copy-status');
+      try {
+        await navigator.clipboard.writeText(document.getElementById('worldline-result').textContent.trim());
+        status.textContent = '結果をコピーしました。';
+      } catch {
+        status.textContent = 'コピーできませんでした。本文を選択してコピーしてください。';
+      }
+    });
+    document.getElementById('delete-form').addEventListener('submit', (event) => {
+      if (!window.confirm('この世界線を削除します。元に戻せません。よろしいですか？')) {
+        event.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
+

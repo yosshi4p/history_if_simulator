@@ -1,0 +1,14 @@
+# アプリの実行に必要なPythonライブラリ
+Flask>=3.1,<4
+Flask-SQLAlchemy>=3.1,<4
+SQLAlchemy>=2.0,<3
+openai>=1.68,<3
+
+# Windowsでも「Asia/Tokyo」の時刻を扱うために必要
+tzdata>=2025.1
+
+# RenderでPostgreSQLを使う際の接続ドライバー
+psycopg2-binary>=2.9,<3
+
+# RenderなどのLinuxサーバーで使う起動用ライブラリ
+gunicorn>=23,<26; sys_platform != "win32"
